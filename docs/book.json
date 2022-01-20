@@ -1,0 +1,19 @@
+{
+  "gitbook": ">3.0.0",
+  "plugins": ["edit-link", "theme-kdu@git+https://github.com/khanhduy1407/gitbook-plugin-theme-kdu.git", "-fontsettings", "github"],
+  "pluginsConfig": {
+    "edit-link": {
+      "base": "https://github.com/khanhduy1407/kdu-router/edit/dev/docs",
+      "label": "Edit This Page"
+    },
+    "github": {
+      "url": "https://github.com/khanhduy1407/kdu-router/"
+    }
+  },
+  "links": {
+    "sharing": {
+      "facebook": false,
+      "twitter": false
+    }
+  }
+}

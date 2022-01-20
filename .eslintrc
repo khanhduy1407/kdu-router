@@ -1,0 +1,10 @@
+{
+  "root": true,
+  "plugins": [
+    "flowtype"
+  ],
+  "extends": [
+    "plugin:kdu-libs/recommended",
+    "plugin:flowtype/recommended"
+  ]
+}
