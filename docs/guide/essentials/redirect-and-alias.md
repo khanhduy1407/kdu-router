@@ -1,6 +1,6 @@
 # Redirect and Alias
 
-### Redirect
+## Redirect
 
 Redirecting is also done in the `routes` configuration. To redirect from `/a` to `/b`:
 
@@ -35,11 +35,13 @@ const router = new KduRouter({
 })
 ```
 
+Note that [Navigation Guards](../advanced/navigation-guards.md) are not applied on the route that redirects, only on its target. In the example below, adding a `beforeEnter` or `beforeLeave` guard to the `/a` route would not have any effect.
+
 For other advanced usage, checkout the [example](https://github.com/khanhduy1407/kdu-router/blob/dev/examples/redirect/app.js).
 
-### Alias
+## Alias
 
-A redirect means when the user visits `/a`, and URL will be replaced by `/b`, and then matched as `/b`. But what is an alias?
+A redirect means when the user visits `/a`, the URL will be replaced by `/b`, and then matched as `/b`. But what is an alias?
 
 **An alias of `/a` as `/b` means when the user visits `/b`, the URL remains `/b`, but it will be matched as if the user is visiting `/a`.**
 
@@ -55,4 +57,4 @@ const router = new KduRouter({
 
 An alias gives you the freedom to map a UI structure to an arbitrary URL, instead of being constrained by the configuration's nesting structure.
 
-For advanced usage, checkout the [example](https://github.com/khanhduy1407/kdu-router/blob/dev/examples/route-alias/app.js).
+For advanced usage, check out the [example](https://github.com/khanhduy1407/kdu-router/blob/dev/examples/route-alias/app.js).

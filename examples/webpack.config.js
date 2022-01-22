@@ -1,10 +1,15 @@
 const fs = require('fs')
 const path = require('path')
-const webpack = require('webpack')
+const KduPlugin = require('kdu-loader/lib/plugin')
 
 module.exports = {
+  // Expose __dirname to allow automatically setting basename.
+  context: __dirname,
+  node: {
+    __dirname: true
+  },
 
-  devtool: 'inline-source-map',
+  mode: process.env.NODE_ENV || 'development',
 
   entry: fs.readdirSync(__dirname).reduce((entries, dir) => {
     const fullDir = path.join(__dirname, dir)
@@ -25,32 +30,40 @@ module.exports = {
 
   module: {
     rules: [
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
-      { test: /\.vue$/, loader: 'vue-loader' }
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: 'babel-loader'
+      },
+      {
+        test: /\.kdu$/,
+        use: 'kdu-loader'
+      },
+      {
+        test: /\.css$/,
+        use: ['kdu-style-loader', 'css-loader']
+      }
     ]
   },
 
   resolve: {
     alias: {
-      'vue': 'vue/dist/vue.common.js',
-      'vue-router': path.join(__dirname, '..', 'src')
+      kdu: 'kdu/dist/kdu.esm.js',
+      'kdu-router': path.join(__dirname, '..', 'src')
     }
   },
 
-  // Expose __dirname to allow automatically setting basename.
-  context: __dirname,
-  node: {
-    __dirname: true
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        shared: {
+          name: 'shared',
+          chunks: 'initial',
+          minChunks: 2
+        }
+      }
+    }
   },
 
-  plugins: [
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'shared',
-      filename: 'shared.js'
-    }),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
-    })
-  ]
-
+  plugins: [new KduPlugin()]
 }

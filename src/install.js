@@ -4,7 +4,7 @@ import Link from './components/link'
 export let _Kdu
 
 export function install (Kdu) {
-  if (install.installed) return
+  if (install.installed && _Kdu === Kdu) return
   install.installed = true
 
   _Kdu = Kdu
@@ -43,8 +43,8 @@ export function install (Kdu) {
     get () { return this._routerRoot._route }
   })
 
-  Kdu.component('router-view', View)
-  Kdu.component('router-link', Link)
+  Kdu.component('RouterView', View)
+  Kdu.component('RouterLink', Link)
 
   const strats = Kdu.config.optionMergeStrategies
   // use the same hook merging strategy for route hooks

@@ -1,11 +1,11 @@
 # Installation
 
-### Direct Download / CDN
+## Direct Download / CDN
 
 [https://unpkg.com/kdu-router/dist/kdu-router.js](https://unpkg.com/kdu-router/dist/kdu-router.js)
 
 <!--email_off-->
-[Unpkg.com](https://unpkg.com) provides NPM-based CDN links. The above link will always point to the latest release on NPM. You can also use a specific version/tag via URLs like `https://unpkg.com/vue-router@2.0.0/dist/vue-router.js`.
+[Unpkg.com](https://unpkg.com) provides npm-based CDN links. The above link will always point to the latest release on npm. You can also use a specific version/tag via URLs like `https://unpkg.com/kdu-router@2.0.0/dist/kdu-router.js`.
 <!--/email_off-->
 
 Include `kdu-router` after Kdu and it will install itself automatically:
@@ -15,7 +15,7 @@ Include `kdu-router` after Kdu and it will install itself automatically:
 <script src="/path/to/kdu-router.js"></script>
 ```
 
-### NPM
+## npm
 
 ``` bash
 npm install kdu-router
@@ -32,7 +32,7 @@ Kdu.use(KduRouter)
 
 You don't need to do this when using global script tags.
 
-### Dev Build
+## Dev Build
 
 You will have to clone directly from GitHub and build `kdu-router` yourself if
 you want to use the latest dev build.

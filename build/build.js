@@ -1,115 +1,70 @@
 const fs = require('fs')
 const path = require('path')
 const zlib = require('zlib')
-const uglify = require('uglify-js')
+const terser = require('terser')
 const rollup = require('rollup')
-const buble = require('rollup-plugin-buble')
-const flow = require('rollup-plugin-flow-no-whitespace')
-const cjs = require('rollup-plugin-commonjs')
-const node = require('rollup-plugin-node-resolve')
-const replace = require('rollup-plugin-replace')
-const version = process.env.VERSION || require('../package.json').version
-const banner =
-`/**
-  * kdu-router v${version}
-  * (c) ${new Date().getFullYear()} NKDuy
-  * @license MIT
-  */`
+const configs = require('./configs')
 
 if (!fs.existsSync('dist')) {
   fs.mkdirSync('dist')
 }
 
-const resolve = _path => path.resolve(__dirname, '../', _path)
-
-build([
-  // browser dev
-  {
-    dest: resolve('dist/kdu-router.js'),
-    format: 'umd',
-    env: 'development'
-  },
-  {
-    dest: resolve('dist/kdu-router.min.js'),
-    format: 'umd',
-    env: 'production'
-  },
-  {
-    dest: resolve('dist/kdu-router.common.js'),
-    format: 'cjs'
-  },
-  {
-    dest: resolve('dist/kdu-router.esm.js'),
-    format: 'es'
-  }
-].map(genConfig))
+build(configs)
 
 function build (builds) {
   let built = 0
   const total = builds.length
   const next = () => {
-    buildEntry(builds[built]).then(() => {
-      built++
-      if (built < total) {
-        next()
-      }
-    }).catch(logError)
+    buildEntry(builds[built])
+      .then(() => {
+        built++
+        if (built < total) {
+          next()
+        }
+      })
+      .catch(logError)
   }
 
   next()
 }
 
-function genConfig (opts) {
-  const config = {
-    entry: resolve('src/index.js'),
-    dest: opts.dest,
-    format: opts.format,
-    banner,
-    moduleName: 'KduRouter',
-    plugins: [
-      flow(),
-      node(),
-      cjs(),
-      replace({
-        __VERSION__: version
-      }),
-      buble()
-    ]
-  }
-
-  if (opts.env) {
-    config.plugins.unshift(replace({
-      'process.env.NODE_ENV': JSON.stringify(opts.env)
-    }))
-  }
-
-  return config
-}
-
-function buildEntry (config) {
-  const isProd = /min\.js$/.test(config.dest)
-  return rollup.rollup(config).then(bundle => {
-    const code = bundle.generate(config).code
-    if (isProd) {
-      var minified = (config.banner ? config.banner + '\n' : '') + uglify.minify(code, {
-        output: {
-          ascii_only: true
-        },
-        compress: {
-          pure_funcs: ['makeMap']
-        }
-      }).code
-      return write(config.dest, minified, true)
-    } else {
-      return write(config.dest, code)
-    }
-  })
+function buildEntry ({ input, output }) {
+  const { file, banner } = output
+  const isProd = /min\.js$/.test(file)
+  return rollup
+    .rollup(input)
+    .then(bundle => bundle.generate(output))
+    .then(bundle => {
+      // console.log(bundle)
+      const code = bundle.output[0].code
+      if (isProd) {
+        const minified =
+          (banner ? banner + '\n' : '') +
+          terser.minify(code, {
+            toplevel: true,
+            output: {
+              ascii_only: true
+            },
+            compress: {
+              pure_funcs: ['makeMap']
+            }
+          }).code
+        return write(file, minified, true)
+      } else {
+        return write(file, code)
+      }
+    })
 }
 
 function write (dest, code, zip) {
   return new Promise((resolve, reject) => {
     function report (extra) {
-      console.log(blue(path.relative(process.cwd(), dest)) + ' ' + getSize(code) + (extra || ''))
+      console.log(
+        blue(path.relative(process.cwd(), dest)) +
+          ' ' +
+          getSize(code) +
+          (extra || '')
+      )
       resolve()
     }
 

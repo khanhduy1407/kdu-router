@@ -48,8 +48,7 @@ const User = {
 }
 ```
 
-To render components into this nested outlet, we need to use the `children`
-option in `KduRouter` constructor config:
+To render components into this nested outlet, we need to use the `children` option in `KduRouter` constructor config:
 
 ``` js
 const router = new KduRouter({
@@ -96,5 +95,3 @@ const router = new KduRouter({
   ]
 })
 ```
-
-A working demo of this example can be found [here](http://jsfiddle.net/yyx990803/L7hscd8h/).

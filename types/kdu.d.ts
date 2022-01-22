@@ -2,22 +2,21 @@
  * Augment the typings of Kdu.js
  */
 
-import Kdu = require("types/kdu");
-import KduRouter = require("./index");
-import { Route, RawLocation, NavigationGuard } from "./index";
+import Kdu from 'kdu'
+import KduRouter, { Route, RawLocation, NavigationGuard } from './index'
 
-declare module "kdu/types/kdu" {
+declare module 'kdu/types/kdu' {
   interface Kdu {
-    $router: KduRouter;
-    $route: Route;
+    $router: KduRouter
+    $route: Route
   }
 }
 
-declare module "kdu/types/options" {
+declare module 'kdu/types/options' {
   interface ComponentOptions<V extends Kdu> {
-    router?: KduRouter;
-    beforeRouteEnter?: NavigationGuard;
-    beforeRouteLeave?: NavigationGuard;
-    beforeRouteUpdate?: NavigationGuard;
+    router?: KduRouter
+    beforeRouteEnter?: NavigationGuard<V>
+    beforeRouteLeave?: NavigationGuard<V>
+    beforeRouteUpdate?: NavigationGuard<V>
   }
 }

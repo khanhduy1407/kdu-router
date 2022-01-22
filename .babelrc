@@ -1,4 +1,4 @@
 {
-  "presets": ["es2015", "flow-kdu"],
+  "presets": ["env", "flow-kdu"],
   "plugins": ["syntax-dynamic-import"]
 }

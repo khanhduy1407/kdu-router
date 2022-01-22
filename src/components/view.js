@@ -1,7 +1,8 @@
 import { warn } from '../util/warn'
+import { extend } from '../util/misc'
 
 export default {
-  name: 'router-view',
+  name: 'RouterView',
   functional: true,
   props: {
     name: {
@@ -10,6 +11,7 @@ export default {
     }
   },
   render (_, { props, children, parent, data }) {
+    // used by devtools to display a router-view badge
     data.routerView = true
 
     // directly use parent context's createElement() function
@@ -24,11 +26,14 @@ export default {
     let depth = 0
     let inactive = false
     while (parent && parent._routerRoot !== parent) {
-      if (parent.$vnode && parent.$vnode.data.routerView) {
-        depth++
-      }
-      if (parent._inactive) {
-        inactive = true
+      const vnodeData = parent.$vnode && parent.$vnode.data
+      if (vnodeData) {
+        if (vnodeData.routerView) {
+          depth++
+        }
+        if (vnodeData.keepAlive && parent._inactive) {
+          inactive = true
+        }
       }
       parent = parent.$parent
     }
@@ -61,14 +66,37 @@ export default {
       }
     }
 
-    // also regiseter instance in prepatch hook
+    // also register instance in prepatch hook
     // in case the same component instance is reused across different routes
     ;(data.hook || (data.hook = {})).prepatch = (_, vnode) => {
       matched.instances[name] = vnode.componentInstance
     }
 
+    // register instance in init hook
+    // in case kept-alive component be actived when routes changed
+    data.hook.init = (vnode) => {
+      if (vnode.data.keepAlive &&
+        vnode.componentInstance &&
+        vnode.componentInstance !== matched.instances[name]
+      ) {
+        matched.instances[name] = vnode.componentInstance
+      }
+    }
+
     // resolve props
-    data.props = resolveProps(route, matched.props && matched.props[name])
+    let propsToPass = data.props = resolveProps(route, matched.props && matched.props[name])
+    if (propsToPass) {
+      // clone to prevent mutation
+      propsToPass = data.props = extend({}, propsToPass)
+      // pass non-declared props as attrs
+      const attrs = data.attrs = data.attrs || {}
+      for (const key in propsToPass) {
+        if (!component.props || !(key in component.props)) {
+          attrs[key] = propsToPass[key]
+          delete propsToPass[key]
+        }
+      }
+    }
 
     return h(component, data, children)
   }

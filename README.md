@@ -1,6 +1,6 @@
 # kdu-router
 
-> This is kdu-router 2.0 which works only with Kdu 2.0..
+> This is kdu-router 3.0 which works only with Kdu 2.0..
 
 ### Introduction
 
@@ -32,9 +32,20 @@ npm run dev
 # lint & run all tests
 npm test
 
-# serve docs at localhost:4000 (requires global gitbook-cli)
+# serve docs at localhost:8080
 npm run docs
 ```
+
+## Releasing
+
+- `yarn run release`
+  - Ensure tests are passing `yarn run test`
+  - Build dist files `VERSION=<the_version> yarn run build`
+  - Build changelog `yarn run changelog`
+  - Commit dist files `git add dist CHANGELOG.md && git commit -m "[build $VERSION]"`
+  - Publish a new version `npm version $VERSION --message "[release] $VERSION"
+  - Push tags `git push origin refs/tags/v$VERSION && git push`
+  - Publish to npm `npm publish`
 
 ## License
 
